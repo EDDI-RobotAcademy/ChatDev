@@ -38,8 +38,10 @@ class Codes:
                     continue
                 group1 = match.group(1)
                 filename = extract_filename_from_line(group1)
-                if "__main__" in code:
+                if "__main__" in code and "unittest" not in code:
                     filename = "main.py"
+                if "__main__" in code and "unittest" in code:
+                    filename = "unittest_main.py"
                 if filename == "":  # post-processing
                     filename = extract_filename_from_code(code)
                 assert filename != ""
@@ -126,6 +128,93 @@ class Codes:
                                                        "python" if filename.endswith(".py") else filename.split(".")[
                                                            -1], self.codebooks[filename])
         return content
+    
+    def _get_unittest_codes(self) -> str:
+        content = ""
+        number_of_unit_test_files = 0
+        for filename in self.codebooks.keys():
+            # 'unittest'로 시작하는 파일만 선택
+            if filename.startswith("unittest"):
+                content += "{}\n```{}\n{}\n```\n\n".format(
+                    filename,
+                    "python" if filename.endswith(".py") else filename.split(".")[-1],
+                    self.codebooks[filename]
+                )
+                number_of_unit_test_files += 1
+        if number_of_unit_test_files == 0:
+            return False
+        return content
+
+    def _update_unittest_codes(self, generated_content):
+        new_codes = Codes(generated_content)
+        differ = difflib.Differ()
+        unittest_keys = [key for key in new_codes.codebooks.keys() if key.startswith("unittest")]
+
+        for key in unittest_keys:
+            if key not in self.codebooks.keys() or self.codebooks[key] != new_codes.codebooks[key]:
+                update_codes_content = "**[Update Codes]**\n\n"
+                update_codes_content += "{} updated.\n".format(key)
+                old_codes_content = self.codebooks[key] if key in self.codebooks.keys() else "# None"
+                new_codes_content = new_codes.codebooks[key]
+
+                lines_old = old_codes_content.splitlines()
+                lines_new = new_codes_content.splitlines()
+
+                unified_diff = difflib.unified_diff(lines_old, lines_new, lineterm='', fromfile='Old', tofile='New')
+                unified_diff = '\n'.join(unified_diff)
+                update_codes_content = update_codes_content + "\n\n" + """```
+'''
+
+'''\n""" + unified_diff + "\n```"
+
+                log_visualize(update_codes_content)
+                self.codebooks[key] = new_codes.codebooks[key]
+    
+    def _rewrite_unittest_codes(self, git_management, phase_info=None) -> None:# 유닛테스트코드만 rewrite가능한지?아니면 따로 구성할 필요 없는지 체크
+        directory = self.directory
+        rewrite_codes_content = "**[Rewrite Codes]**\n\n"
+        if os.path.exists(directory) and len(os.listdir(directory)) > 0:
+            self.version += 1.0
+        if not os.path.exists(directory):
+            os.mkdir(self.directory)
+            rewrite_codes_content += "{} Created\n".format(directory)
+        unittest_keys = [key for key in self.codebooks.keys() if key.startswith("unittest")]
+        for filename in unittest_keys:
+            filepath = os.path.join(directory, filename)
+            with open(filepath, "w", encoding="utf-8") as writer:
+                writer.write(self.codebooks[filename])
+                rewrite_codes_content += os.path.join(directory, filename) + " Wrote\n"
+
+        if git_management:
+            if not phase_info:
+                phase_info = ""
+            log_git_info = "**[Git Information]**\n\n"
+            if self.version == 1.0:
+                os.system("cd {}; git init".format(self.directory))
+                log_git_info += "cd {}; git init\n".format(self.directory)
+            os.system("cd {}; git add .".format(self.directory))
+            log_git_info += "cd {}; git add .\n".format(self.directory)
+
+            # check if there exist diff
+            completed_process = subprocess.run("cd {}; git status".format(self.directory), shell=True, text=True,
+                                               stdout=subprocess.PIPE)
+            if "nothing to commit" in completed_process.stdout:
+                self.version -= 1.0
+                return
+
+            os.system("cd {}; git commit -m \"v{}\"".format(self.directory, str(self.version) + " " + phase_info))
+            log_git_info += "cd {}; git commit -m \"v{}\"\n".format(self.directory,
+                                                                      str(self.version) + " " + phase_info)
+            if self.version == 1.0:
+                os.system("cd {}; git submodule add ./{} {}".format(os.path.dirname(os.path.dirname(self.directory)),
+                                                                    "WareHouse/" + os.path.basename(self.directory),
+                                                                    "WareHouse/" + os.path.basename(self.directory)))
+                log_git_info += "cd {}; git submodule add ./{} {}\n".format(
+                    os.path.dirname(os.path.dirname(self.directory)),
+                    "WareHouse/" + os.path.basename(self.directory),
+                    "WareHouse/" + os.path.basename(self.directory))
+                log_visualize(rewrite_codes_content)
+            log_visualize(log_git_info)
 
     def _load_from_hardware(self, directory) -> None:
         assert len([filename for filename in os.listdir(directory) if filename.endswith(".py")]) > 0

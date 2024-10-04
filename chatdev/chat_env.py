@@ -68,7 +68,11 @@ class ChatEnv:
             "language": "",
             "review_comments": "",
             "error_summary": "",
-            "test_reports": ""
+            "test_reports": "",
+            "unittest_reports": "",
+            "unittest_error_summary": "",
+            "unittest_description":"",
+            "unittest_codes":""
         }
 
     @staticmethod
@@ -156,6 +160,65 @@ class ChatEnv:
 
         return False, success_info
 
+    def bugs_in_unittest(self) -> tuple[bool, str]:
+        # directory = self.env_dict['directory']-> 기존코드
+        # if any(item.startswith('unittest') for item in self.env_dict['directory']):
+            
+        # 여기서 확인 로직작성
+        # unittest로 시작하는 파일을 실행시켜야됨
+        # directory는 warehouse의 생성된 디렉토리
+        directory = self.env_dict['directory']
+        success_info = "The software run successfully without errors."
+        try:
+
+            # check if we are on windows or linux
+            if os.name == 'nt':
+                command = "cd {} && dir && python unittest.py".format(directory)
+                process = subprocess.Popen(
+                    command,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+                )
+            else:
+                command = "cd {}; ls -l; python3 unittest.py;".format(directory)
+                process = subprocess.Popen(command,
+                                        shell=True,
+                                        preexec_fn=os.setsid,
+                                        stdout=subprocess.PIPE,
+                                        stderr=subprocess.PIPE
+                                        )
+            time.sleep(3)
+            return_code = process.returncode
+            # Check if the software is still running
+            if process.poll() is None:
+                if "killpg" in dir(os):
+                    os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+                else:
+                    os.kill(process.pid, signal.SIGTERM)
+                    if process.poll() is None:
+                        os.kill(process.pid, signal.CTRL_BREAK_EVENT)
+
+            if return_code == 0:
+                return False, success_info
+            else:
+                error_output = process.stderr.read().decode('utf-8')
+                if error_output:
+                    if "Traceback".lower() in error_output.lower():
+                        errs = error_output.replace(directory + "/", "")
+                        return True, errs
+                else:
+                    return False, success_info
+        except subprocess.CalledProcessError as e:
+            return True, f"Error: {e}"
+        except Exception as ex:
+            return True, f"An error occurred: {ex}"
+
+        return False, success_info
+        # else:
+        #     return False, "there is no unittest code"
+    
     def recruit(self, agent_name: str):
         self.roster._recruit(agent_name)
 
@@ -173,6 +236,15 @@ class ChatEnv:
 
     def get_codes(self) -> str:
         return self.codes._get_codes()
+    
+    def get_unittest_codes(self) -> str:
+        return self.codes._get_unittest_codes()
+
+    def rewrite_unittest_codes(self, phase_info=None) -> None:
+        self.codes._rewrite_unittest_codes(self.config.git_management, phase_info)
+
+    def update_unittest_codes(self, generated_content):
+        self.codes._update_unittest_codes(generated_content)
 
     def _load_from_hardware(self, directory) -> None:
         self.codes._load_from_hardware(directory)
