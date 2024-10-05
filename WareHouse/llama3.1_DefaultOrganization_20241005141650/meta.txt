@@ -1,0 +1,40 @@
+Task:
+Create a Python command-line application that simulates a dice rolling game using Domain Driven Design (DDD). Implement core domain entities like Dice, Roll, and Player. Include features such as multiple dice rolls, sum calculation, and input validation.
+
+Config:
+ChatEnvConfig.with_memory: False
+ChatEnvConfig.clear_structure: True
+ChatEnvConfig.git_management: False
+ChatEnvConfig.gui_design: True
+ChatEnvConfig.incremental_develop: False
+ChatEnvConfig.background_prompt: ChatDev is a software company powered by multiple intelligent agents, such as chief executive officer, chief human resources officer, chief product officer, chief technology officer, etc, with a multi-agent organizational structure and the mission of 'changing the digital world through programming'.
+
+
+Roster:
+Chief Executive Officer, Counselor, Chief Human Resource Officer, Chief Product Officer, Chief Technology Officer, Programmer, Code Reviewer, Software Test Engineer, Chief Creative Officer, Unit Test Specialist
+
+Modality:
+that's a valid point about mind map not being a good fit i agree that application seems like a promising choice, given its ability to implement visualized games and tools via python
+
+however, since this is a text-based command-line application, i'm wondering if we should consider the simplicity of document as an option it could potentially be used to present the game's rules, outcomes, or statistics in a concise and easy-to-read format
+
+i'd like to hear your thoughts on whether application or document would be a better fit for this task
+
+Ideas:
+
+
+Language:
+ I agree with your proposal of using Python as the target programming language. I think it's a perfect fit for this task due to its simplicity, readability, and extensive libraries that will make implementing the Domain Driven Design (DDD) entities and features much easier.
+
+Python
+*
+
+Code_Version:
+4.0
+
+Proposed_images:
+0
+
+Incorporated_images:
+0
+
