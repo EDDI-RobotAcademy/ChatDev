@@ -89,16 +89,7 @@ class ChatEnv:
         self.requirements.directory = directory
         self.manuals.directory = directory
 
-        if os.path.exists(self.env_dict['directory']) and len(os.listdir(directory)) > 0:
-            new_directory = "{}.{}".format(directory, time.strftime("%Y%m%d%H%M%S", time.localtime()))
-            shutil.copytree(directory, new_directory)
-            print("{} Copied to {}".format(directory, new_directory))
-        if os.path.exists(self.env_dict['directory']):
-            shutil.rmtree(self.env_dict['directory'])
-            os.mkdir(self.env_dict['directory'])
-            print("{} Created".format(directory))
-        else:
-            os.mkdir(self.env_dict['directory'])
+        os.makedirs(self.env_dict['directory'], exist_ok=True)
     
     def init_memory(self):
         self.memory.id_enabled = True

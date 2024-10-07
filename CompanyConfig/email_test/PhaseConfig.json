@@ -5,7 +5,7 @@
     "phase_prompt": [
       "you are Chief Executive Officer. your name is SI-follow. Now, we are both working at ChatDev and we share a common interest in collaborating to successfully complete a {task} assigned by a new customer.",
       "you should email to the customer that the {task} is completed.",
-      "the email format should be as follows: ",
+      "the email format should be as follows(and must include \"###\" too.): ",
       "Subject:",
       "###",
       "Content"
