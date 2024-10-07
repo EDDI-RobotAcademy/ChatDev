@@ -715,16 +715,28 @@ class UnitTestModification(Phase):
         super().__init__(**kwargs)
     
     def update_phase_env(self, chat_env):
-        self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
-                               "modality": chat_env.env_dict['modality'],
-                               "ideas": chat_env.env_dict['ideas'],
-                               "language": chat_env.env_dict['language'],
-                               "unittest_reports": chat_env.env_dict['unittest_reports'],
-                               "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
-                               "unittest_description": chat_env.env_dict['unittest_description'],
-                               "codes": chat_env.get_codes()
-                               
-                               })
+        if any(item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory'])):
+            self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
+                                "modality": chat_env.env_dict['modality'],
+                                "ideas": chat_env.env_dict['ideas'],
+                                "language": chat_env.env_dict['language'],
+                                "unittest_reports": chat_env.env_dict['unittest_reports'],
+                                "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
+                                "unittest_description": chat_env.env_dict['unittest_description'],
+                                "codes": "",
+                                "unittest_codes": chat_env.get_unittest_codes()
+                                })
+        else:
+            self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
+                                "modality": chat_env.env_dict['modality'],
+                                "ideas": chat_env.env_dict['ideas'],
+                                "language": chat_env.env_dict['language'],
+                                "unittest_reports": chat_env.env_dict['unittest_reports'],
+                                "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
+                                "unittest_description": chat_env.env_dict['unittest_description'],
+                                "codes": chat_env.get_codes(),
+                                "unittest_codes": ""
+                                })
     def update_chat_env(self, chat_env) -> ChatEnv:
         if "```".lower() in self.seminar_conclusion.lower():
             chat_env.update_unittest_codes(self.seminar_conclusion)

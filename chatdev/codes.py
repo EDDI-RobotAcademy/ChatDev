@@ -152,7 +152,7 @@ class Codes:
 
         for key in unittest_keys:
             if key not in self.codebooks.keys() or self.codebooks[key] != new_codes.codebooks[key]:
-                update_codes_content = "**[Update Codes]**\n\n"
+                update_codes_content = "**[Update Unit Test Codes]**\n\n"
                 update_codes_content += "{} updated.\n".format(key)
                 old_codes_content = self.codebooks[key] if key in self.codebooks.keys() else "# None"
                 new_codes_content = new_codes.codebooks[key]
@@ -172,7 +172,7 @@ class Codes:
     
     def _rewrite_unittest_codes(self, git_management, phase_info=None) -> None:# 유닛테스트코드만 rewrite가능한지?아니면 따로 구성할 필요 없는지 체크
         directory = self.directory
-        rewrite_codes_content = "**[Rewrite Codes]**\n\n"
+        rewrite_codes_content = "**[Rewrite Unit Test Codes]**\n\n"
         if os.path.exists(directory) and len(os.listdir(directory)) > 0:
             self.version += 1.0
         if not os.path.exists(directory):

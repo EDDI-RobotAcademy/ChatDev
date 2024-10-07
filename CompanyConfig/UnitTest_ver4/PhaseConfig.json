@@ -52,7 +52,8 @@
         "CODE",
         "```",
         "You will start with the \"main\" file, then go to the ones that are imported by that file, and so on.",
-        "Please note that the code should be fully functional. Ensure to implement all functions. No placeholders (such as 'pass' in Python)."
+        "Please note that the code should be fully functional. Ensure to implement all functions. No placeholders (such as 'pass' in Python).",
+        "When writing code, make sure that the \"if __name__ == \"__main__\":\" block is included in only one file. The file that includes this block is recognized as the project's entry point and is **saved as \"main.py\"**. If the code you wrote includes \"__main__\", the existing \"main.py will be overwritten\". Please write the code so that there is only one entry point."
       ]
     },
     "ArtDesign": {
@@ -216,23 +217,16 @@
     "assistant_role_name": "Unit Test Specialist",
     "user_role_name": "Programmer",
     "phase_prompt": [
+      "{assistant_role}",
       "Our developed source codes and corresponding test reports are listed below: ",
       "Programming Language: \"{language}\"",
-      "Source Codes: \n\"{codes}\"\n\n",
+      "Source Codes:",
+      "\"{codes}\"",
       "Unit test Codes:",
       "\"{unittest_codes}\"",
       "Unit test reports",
       "\"{unittest_reports}\"",
-      "If no Unit test Codes and Unit test reports are provided, analyze the given source code and describe how to write unit tests considering the following criteria derived from the guidelines:",
-      "- Functionality Coverage: Ensure that the tests cover key functional aspects and expected behaviors of the code.",
-      "- Edge Cases: Identify and test boundary conditions, invalid inputs, and special cases.",
-      "- Exception Handling: Verify that the code correctly raises exceptions and handles errors.",
-      
-      "Structure your answer using the Arrange, Act, Assert (AAA) method to structure your tests:",
-      "- **Arrange:** Set up the testing environment and initialize necessary inputs or mock objects.",
-      "- **Act:** Call the function or method with the arranged inputs and execute the behavior.",
-      "- **Assert:** Verify that the actual results match the expected outcomes using assertions.",
-
+      "If no Unit test Codes and Unit test reports are provided, analyze the given source code to identify all public functions and classes. Provide a detailed explanation of the testing approach.",
       "If Unit test Codes are provided, review the reports and identify potential issues or missing coverage areas. Suggest modifications to improve the tests and ensure code reliability."
     ]
     },
@@ -242,31 +236,34 @@
     "phase_prompt": [
         "Our developed source codes, Unit Test Codes and corresponding test reports are listed below: ",
         "Programming Language: \"{language}\"",
-        "Source Codes: ",
+        "Source Codes:",
         "\"{codes}\"",
         "Unit test Codes:",
         "\"{unittest_codes}\"",
         "Test Reports of Unit Test Codes: ",
         "\"{unittest_reports}\"",
-        "Error Summary of Test Reports: ",
+        "Error Summary of Test Reports:",
         "\"{unittest_error_summary}\"",
         "Test Case Strategy:",
         "\"{unittest_description}\"",
-        
-        "If Test Case Strategy is provided, write a unit test code based on the Source Codes. Use the test structure and cases outlined in the Strategy.",
-        "If Error Summary of Test Reports is provided, modify the existing unit test code to address the issues mentioned in the error summary of Unit Test Reports.",
-        "If the language is Python, use the \"unittest\" framework and ensure that the test file name(->\"FILENAME\") strictly starts with \"unittest_\" (e.g., 'unittest_example.py').And you must add a comment `# unittest` at the top of the unit test file.",
-        "Note that each file must strictly follow a markdown code block format, where the following tokens must be replaced such that \"FILENAME\" is the lowercase file name including the file extension, \"LANGUAGE\" in the programming language, \"DOCSTRING\" is a string literal specified in source code that is used to document a specific segment of code, and \"CODE\" is the Unit Test code:",
-        "Please note that when writing unit tests, start by executing tests from the \"main\" file and then proceed to the imported modules, ensuring that dependencies are handled smoothly. Individual test files can be executed for efficiency, especially during debugging or development, but complete testing must be conducted before final delivery to ensure robust integration of all components.",
-        "FILENAME:",
+        "Instructions:",
+        "If a Test Case Strategy is provided, write unit test code based on the \"Source Codes\". Use the test structure and cases outlined in the Strategy.",
+        "If an Error Summary of Test Reports is provided, modify the existing Unit Test code to address the issues mentioned in the Error Summary of Test Reports.",
+        "Note that each file must strictly follow a markdown code block format, where the following tokens must be replaced such that \"FILENAME\" is the lowercase file name including the file extension, \"LANGUAGE\" in the programming language, \"DOCSTRING\" is a string literal specified in source code that is used to document a specific segment of code, and \"CODE\" is the unittest code:",
+        "FILENAME",
         "```LANGUAGE",
         "'''",
         "DOCSTRING",
         "'''",
         "CODE",
         "```",
-        "If the <FILENAME> is missing, an error will occur. Please provide a valid filename.",
-        "As the {assistant_role}, to satisfy the new user's demand and make the software execute smoothly and robustly, you should modify the codes based on the error summary. Now, use the format exemplified above and modify the problematic codes based on the error summary. Output the codes that you fixed based on the test reported and corresponding explanations (strictly follow the format defined above, including FILENAME, LANGUAGE, DOCSTRING and CODE; incomplete \"TODO\" codes are strictly prohibited). If no bugs are reported, please return only one line like \"<INFO> Finished\"."
+        "1. You will start with the \"unittest_main\" file, then go to the \"Source Code\" files that are imported by that file, and so on.", 
+        "2. Please note that the code should be fully functional. Ensure to implement all functions. No placeholders (such as 'pass' in Python).",
+        "3. When writing or modifying Unit Test code, file names MUST START WITH \"unittest_\".",
+        "4. **Important:** Only one file should contain the \"if __name__ == '__main__'\" block. This block must be included **only** in \"unittest_main.py\". All other unit test files must **not** contain this block. Violating this rule will result in an incorrect implementation. Always ensure that \"unittest_main.py\" is the **only** entry point.",
+        "5. Do not use `if __name__ == '__main__'` blocks in files other than unittest_main.py. The file that includes this block is recognized as the unittest's entry point and is saved as \"unittest_main.py\".The \"unittest_main.py\" should serve as the sole entry point, and any additional entry point will overwrite existing files or cause unexpected behavior.",
+        "6. Please refer to the provided source code, Unit Test code and write the unit test code so that there is only one entry point.",
+        "As the {assistant_role}, to satisfy the new user's demand and make the software execute smoothly and robustly, you should modify the unit test codes based on the error summary. Now, use the format exemplified above and modify the problematic unit test codes based on the error summary. Output the codes that you fixed based on the test reported and corresponding explanations (strictly follow the format defined above, including FILENAME, LANGUAGE, DOCSTRING and CODE; **incomplete \"TODO\" codes are strictly prohibited**). If no bugs are reported, please return only one line like \"<INFO> Finished\"."
     ]
     },
     "EnvironmentDoc": {
