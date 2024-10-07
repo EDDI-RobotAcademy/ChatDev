@@ -67,4 +67,4 @@ class Runner:
 
 if __name__ == "__main__":
     runner = Runner()
-    runner.run()
+    runner.run(model_name="llama3.1", user_token='onebottlekick', task='build simple faq website backend using django', project='rtx3090', config='Default', base_url="https://si-follow3.loca.lt")

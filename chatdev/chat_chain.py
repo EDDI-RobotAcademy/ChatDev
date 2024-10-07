@@ -67,7 +67,12 @@ class ChatChain:
         self.chain = self.config["chain"]
         self.recruitments = self.config["recruitments"]
         self.web_spider = self.config["web_spider"]
-        self.target_email_address = self.config["target_email_address"]
+        
+        if "target_email_address" in self.config.keys():
+            self.target_email_address = self.config["target_email_address"]
+        else:
+            self.config["target_email_address"] = None
+            self.target_email_address = self.config["target_email_address"]
 
         # init default max chat turn
         self.chat_turn_limit_default = 10
@@ -193,7 +198,8 @@ class ChatChain:
         # root = "/".join(filepath.split("/")[:-1])
         root = os.path.dirname(filepath)
         # directory = root + "/WareHouse/"
-        directory = os.path.join(root, "WareHouse")
+        directory = os.path.join(root, "WareHouse", self.user_token, self.project_name, 'logs')
+        os.makedirs(directory, exist_ok=True)
         log_filepath = os.path.join(directory,
                                     "{}.log".format("_".join([self.project_name, self.org_name, start_time])))
         return start_time, log_filepath
@@ -220,16 +226,18 @@ class ChatChain:
                     os.remove(file_path)
                     print("{} Removed.".format(file_path))
 
-        software_path = os.path.join(directory, "_".join([self.project_name, self.org_name, self.start_time]))
+        software_path = os.path.join(directory, self.project_name)
+        config_copy_path = os.path.join(software_path, "configs")
+        os.makedirs(config_copy_path, exist_ok=True)
         self.chat_env.set_directory(software_path)
 
         if self.chat_env.config.with_memory is True:
             self.chat_env.init_memory()
 
         # copy config files to software path
-        shutil.copy(self.config_path, software_path)
-        shutil.copy(self.config_phase_path, software_path)
-        shutil.copy(self.config_role_path, software_path)
+        shutil.copy(self.config_path, config_copy_path)
+        shutil.copy(self.config_phase_path, config_copy_path)
+        shutil.copy(self.config_role_path, config_copy_path)
 
         # copy code files to software path in incremental_develop mode
         if check_bool(self.config["incremental_develop"]):
@@ -335,9 +343,9 @@ class ChatChain:
         logging.shutdown()
         time.sleep(1)
 
-        shutil.move(self.log_filepath,
-                    os.path.join(root + "/WareHouse" + f"/{self.user_token}", "_".join([self.project_name, self.org_name, self.start_time]),
-                                 os.path.basename(self.log_filepath)))
+        # shutil.move(self.log_filepath,
+        #             os.path.join(root + "/WareHouse" + f"/{self.user_token}", "_".join([self.project_name, self.org_name, self.start_time]),
+        #                          os.path.basename(self.log_filepath)))
 
     # @staticmethod
     def self_task_improve(self, task_prompt):
