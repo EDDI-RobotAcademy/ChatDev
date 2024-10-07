@@ -173,7 +173,7 @@ class ChatEnv:
 
             # check if we are on windows or linux
             if os.name == 'nt':
-                command = "cd {} && dir && python unittest.py".format(directory)
+                command = "cd {} && dir && python unittest_main.py".format(directory)
                 process = subprocess.Popen(
                     command,
                     shell=True,
@@ -182,7 +182,7 @@ class ChatEnv:
                     creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
                 )
             else:
-                command = "cd {}; ls -l; python3 unittest.py;".format(directory)
+                command = "cd {}; ls -l; python3 unittest_main.py;".format(directory)
                 process = subprocess.Popen(command,
                                         shell=True,
                                         preexec_fn=os.setsid,
