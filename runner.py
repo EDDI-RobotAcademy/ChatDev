@@ -1,3 +1,5 @@
+import argparse
+
 import logging
 import os
 import sys
@@ -64,7 +66,24 @@ class Runner:
         chat_chain.execute_chain()
         chat_chain.post_processing()
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-t', '--task', default="develop a simple calculator app", help='define task to develop with agents')
+parser.add_argument('-u', '--user_token', default="test_user", help='to use different root dir by user')
+parser.add_argument('-n', '--project_name', default="test_project", help="define project name")
+parser.add_argument('-c', '--config', default='Default', help='config to develop project')
+parser.add_argument('-m', '--model_name', default='llama3.2', help='model name: [llama3.1, llama3.2]')
+parser.add_argument('--api_url', default="https://si-follow.loca.lt", help="llm api url")
+
 
 if __name__ == "__main__":
+    args = parser.parse_args()
+    
     runner = Runner()
-    runner.run(model_name="llama3.1", user_token='onebottlekick', task='build simple faq website backend using django', project='rtx3090', config='Default', base_url="https://si-follow3.loca.lt")
+    runner.run(
+        task=args.task,
+        user_token=args.user_token,
+        project=args.project_name,
+        config=args.config,
+        model_name=args.model_name,
+        base_url=args.api_url
+        )
