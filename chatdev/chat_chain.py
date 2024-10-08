@@ -22,6 +22,9 @@ def check_bool(s):
 class ChatChain:
 
     def __init__(self,
+                 model_name: str,
+                 user_token: str = None,
+                 base_url:str = None,
                  config_path: str = None,
                  config_phase_path: str = None,
                  config_role_path: str = None,
@@ -42,6 +45,9 @@ class ChatChain:
         """
 
         # load config file
+        self.model_name = model_name
+        self.user_token = user_token
+        self.base_url = base_url
         self.config_path = config_path
         self.config_phase_path = config_phase_path
         self.config_role_path = config_role_path
@@ -61,6 +67,12 @@ class ChatChain:
         self.chain = self.config["chain"]
         self.recruitments = self.config["recruitments"]
         self.web_spider = self.config["web_spider"]
+        
+        if "target_email_address" in self.config.keys():
+            self.target_email_address = self.config["target_email_address"]
+        else:
+            self.config["target_email_address"] = None
+            self.target_email_address = self.config["target_email_address"]
 
         # init default max chat turn
         self.chat_turn_limit_default = 10
@@ -71,7 +83,8 @@ class ChatChain:
                                              git_management=check_bool(self.config["git_management"]),
                                              incremental_develop=check_bool(self.config["incremental_develop"]),
                                              background_prompt=self.config["background_prompt"],
-                                             with_memory=check_bool(self.config["with_memory"]))
+                                             with_memory=check_bool(self.config["with_memory"]),
+                                             target_email_address=self.config["target_email_address"])
                                              
         self.chat_env = ChatEnv(self.chat_env_config)
 
@@ -106,7 +119,10 @@ class ChatChain:
                                          role_prompts=self.role_prompts,
                                          phase_name=phase,
                                          model_type=self.model_type,
-                                         log_filepath=self.log_filepath)
+                                         log_filepath=self.log_filepath,
+                                         target_email_address=self.target_email_address,
+                                         model_name=self.model_name,
+                                         base_url=self.base_url)
             self.phases[phase] = phase_instance
 
     def make_recruitment(self):
@@ -153,7 +169,9 @@ class ChatChain:
                                                          config_phase=self.config_phase,
                                                          config_role=self.config_role,
                                                          model_type=self.model_type,
-                                                         log_filepath=self.log_filepath)
+                                                         log_filepath=self.log_filepath,
+                                                         model_name=self.model_name,
+                                                         base_url=self.base_url)
             self.chat_env = compose_phase_instance.execute(self.chat_env)
         else:
             raise RuntimeError(f"PhaseType '{phase_type}' is not yet implemented.")
@@ -180,7 +198,8 @@ class ChatChain:
         # root = "/".join(filepath.split("/")[:-1])
         root = os.path.dirname(filepath)
         # directory = root + "/WareHouse/"
-        directory = os.path.join(root, "WareHouse")
+        directory = os.path.join(root, "WareHouse", self.user_token, self.project_name, 'logs')
+        os.makedirs(directory, exist_ok=True)
         log_filepath = os.path.join(directory,
                                     "{}.log".format("_".join([self.project_name, self.org_name, start_time])))
         return start_time, log_filepath
@@ -193,7 +212,11 @@ class ChatChain:
         """
         filepath = os.path.dirname(__file__)
         root = os.path.dirname(filepath)
-        directory = os.path.join(root, "WareHouse")
+        if self.user_token is not None:
+            directory = os.path.join(root, "WareHouse", self.user_token)
+            os.makedirs(directory, exist_ok=True)
+        else:
+            directory = os.path.join(root, 'WareHouse')
 
         if self.chat_env.config.clear_structure:
             for filename in os.listdir(directory):
@@ -203,16 +226,18 @@ class ChatChain:
                     os.remove(file_path)
                     print("{} Removed.".format(file_path))
 
-        software_path = os.path.join(directory, "_".join([self.project_name, self.org_name, self.start_time]))
+        software_path = os.path.join(directory, self.project_name)
+        config_copy_path = os.path.join(software_path, "configs")
+        os.makedirs(config_copy_path, exist_ok=True)
         self.chat_env.set_directory(software_path)
 
         if self.chat_env.config.with_memory is True:
             self.chat_env.init_memory()
 
         # copy config files to software path
-        shutil.copy(self.config_path, software_path)
-        shutil.copy(self.config_phase_path, software_path)
-        shutil.copy(self.config_role_path, software_path)
+        shutil.copy(self.config_path, config_copy_path)
+        shutil.copy(self.config_phase_path, config_copy_path)
+        shutil.copy(self.config_role_path, config_copy_path)
 
         # copy code files to software path in incremental_develop mode
         if check_bool(self.config["incremental_develop"]):
@@ -318,9 +343,9 @@ class ChatChain:
         logging.shutdown()
         time.sleep(1)
 
-        shutil.move(self.log_filepath,
-                    os.path.join(root + "/WareHouse", "_".join([self.project_name, self.org_name, self.start_time]),
-                                 os.path.basename(self.log_filepath)))
+        # shutil.move(self.log_filepath,
+        #             os.path.join(root + "/WareHouse" + f"/{self.user_token}", "_".join([self.project_name, self.org_name, self.start_time]),
+        #                          os.path.basename(self.log_filepath)))
 
     # @staticmethod
     def self_task_improve(self, task_prompt):
@@ -350,6 +375,7 @@ then you should return a message in a format like \"<INFO> revised_version_of_th
             task_prompt="Do prompt engineering on user query",
             with_task_specify=False,
             model_type=self.model_type,
+            base_url=self.base_url
         )
 
         # log_visualize("System", role_play_session.assistant_sys_msg)

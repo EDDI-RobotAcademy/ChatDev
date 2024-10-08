@@ -8,6 +8,7 @@ from camel.typing import TaskType, ModelType
 from chatdev.chat_env import ChatEnv
 from chatdev.statistics import get_info
 from chatdev.utils import log_visualize, log_arguments
+from chatdev.logger import Logger
 
 
 class Phase(ABC):
@@ -19,7 +20,10 @@ class Phase(ABC):
                  role_prompts,
                  phase_name,
                  model_type,
-                 log_filepath):
+                 log_filepath,
+                 model_name:str,
+                 target_email_address:str = None,
+                 base_url:str = None):
         """
 
         Args:
@@ -43,6 +47,9 @@ class Phase(ABC):
         self.reflection_prompt = """Here is a conversation between two roles: {conversations} {question}"""
         self.model_type = model_type
         self.log_filepath = log_filepath
+        self.target_email_address = target_email_address
+        self.model_name = model_name
+        self.base_url = base_url
 
     @log_arguments
     def chatting(
@@ -105,7 +112,9 @@ class Phase(ABC):
             with_task_specify=with_task_specify,
             memory=memory,
             model_type=model_type,
-            background_prompt=chat_env.config.background_prompt
+            background_prompt=chat_env.config.background_prompt,
+            model_name=self.model_name,
+            base_url=self.base_url
         )
 
         # log_visualize("System", role_play_session.assistant_sys_msg)
@@ -114,6 +123,10 @@ class Phase(ABC):
         # start the chat
         _, input_user_msg = role_play_session.init_chat(None, placeholders, phase_prompt)
         seminar_conclusion = None
+        user_token = self.log_filepath.split('WareHouse')[-1].split('/')[0]
+        phase_log_file_path = os.path.join(os.path.dirname(self.log_filepath), f"{self.__class__.__name__}.log")
+        phase_logger = Logger(phase_log_file_path, user_token+f"{self.__class__.__name__}").get_logger()
+
 
         # handle chats
         # the purpose of the chatting in one phase is to get a seminar conclusion
@@ -180,6 +193,7 @@ class Phase(ABC):
 
         log_visualize("**[Seminar Conclusion]**:\n\n {}".format(seminar_conclusion))
         seminar_conclusion = seminar_conclusion.split("<INFO>")[-1]
+        phase_logger.info(seminar_conclusion)
         return seminar_conclusion
 
     def self_reflection(self,
@@ -290,6 +304,10 @@ class Phase(ABC):
             chat_env: updated global chat chain environment using the conclusion from this phase execution
 
         """
+        user_token = self.log_filepath.split('WareHouse')[-1].split('/')[0]
+        current_phase_log_path = os.path.join(os.path.dirname(self.log_filepath), f"Phase.log")
+        current_phase_logger = Logger(current_phase_log_path, user_token+"_phase").get_logger()
+        current_phase_logger.info(f"{self.__class__.__name__}")
         self.update_phase_env(chat_env)
         self.seminar_conclusion = \
             self.chatting(chat_env=chat_env,
@@ -760,4 +778,16 @@ class Manual(Phase):
     def update_chat_env(self, chat_env) -> ChatEnv:
         chat_env._update_manuals(self.seminar_conclusion)
         chat_env.rewrite_manuals()
+        return chat_env
+    
+    
+class Email(Phase):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        
+    def update_phase_env(self, chat_env):
+        self.phase_env.update({"task": chat_env.env_dict["task_prompt"]})
+    
+    def update_chat_env(self, chat_env) -> ChatEnv:
+        chat_env.send_done_email(to=self.target_email_address, seminar_conclusion=self.seminar_conclusion)
         return chat_env
