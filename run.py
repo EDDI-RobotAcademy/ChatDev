@@ -20,9 +20,10 @@ from camel.typing import ModelType
 
 root = os.path.dirname(__file__)
 sys.path.append(root)
-from dotenv import load_dotenv
-load_dotenv()
-
+# from dotenv import load_dotenv
+# load_dotenv()
+# print(os.environ['BASE_URL'])
+# print(os.environ['MODEL_NAME'])
 from chatdev.chat_chain import ChatChain
 
 try:

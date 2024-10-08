@@ -651,6 +651,117 @@ class EnvironmentDoc(Phase):
             "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
+class UnitTestSummary(Phase):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.isthereunittest = False
+    def update_phase_env(self, chat_env):
+        log_visualize("**[do you have any unittestcode]**:\n\n{}".format([item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory'])]))
+
+        self.isthereunittest = any(item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory']))
+        
+        if self.isthereunittest:
+            (exist_unittest_bugs_flag, unittest_reports) = chat_env.bugs_in_unittest()
+            self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
+                                "modality": chat_env.env_dict['modality'],
+                                "ideas": chat_env.env_dict['ideas'],
+                                "language": chat_env.env_dict['language'],
+                                "unittest_codes": chat_env.get_unittest_codes(),# 유닛테스트코드 가져와야되나
+                                "unittest_reports": unittest_reports,
+                                "exist_unittest_bugs_flag": exist_unittest_bugs_flag})
+            log_visualize("**[Unit Test Reports]**:\n\n{}".format(unittest_reports))
+        else:
+            # 기존 코드를 보고 unittest 코드를 작성 (프롬프트)
+            # get codes해서 프롬프트에 전달후 프롬프트와 함께 전달;;;;;;;
+            self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
+                                "modality": chat_env.env_dict['modality'],
+                                "ideas": chat_env.env_dict['ideas'],
+                                "language": chat_env.env_dict['language'],
+                                "codes": chat_env.get_codes(),
+                                "exist_unittest_bugs_flag": True,
+                                "unittest_codes": "**There is no unitest code because the unit test code has not been written yet**.",
+                                "unittest_reports": "**There is no report because the unit test code has not been written yet**",})
+            log_visualize("**[Unit Test Reports_desc]**:\n\n{}".format(self.phase_env['unittest_reports']))
+
+    
+    def update_chat_env(self, chat_env) -> ChatEnv:
+        if self.isthereunittest is not True:
+            chat_env.env_dict['unittest_description'] = self.seminar_conclusion# 조건달아야할듯
+            chat_env.env_dict['unitetest_reports'] = "**There is no report because the unit test code has not been written yet**."
+
+        elif self.isthereunittest :
+            chat_env.env_dict['unittest_error_summary'] = self.seminar_conclusion# 조건달아야할듯
+            chat_env.env_dict['unittest_description'] = ""
+            chat_env.env_dict['unittest_reports'] = self.phase_env['unittest_reports']# 조건달앙할듯
+        else:
+            return log_visualize("legend situation occurred...")
+        return chat_env
+    
+    def execute(self, chat_env, chat_turn_limit, need_reflect) -> ChatEnv:# 이거 좀 애매함(10.02) -> 한번 잘 봐야댐
+        self.update_phase_env(chat_env)
+        if not self.phase_env['unittest_reports']:
+            if "ModuleNotFoundError" in self.phase_env['unittest_reports']:
+                chat_env.fix_module_not_found_error(self.phase_env['unittest_reports'])
+                log_visualize(
+                    f"Software Test Engineer found ModuleNotFoundError:\n{self.phase_env['unittest_reports']}\n")
+                pip_install_content = ""
+                for match in re.finditer(r"No module named '(\S+)'", self.phase_env['unittest_reports'], re.DOTALL):
+                    module = match.group(1)
+                    pip_install_content += "{}\n```{}\n{}\n```\n".format("cmd", "bash", f"pip install {module}")
+                    log_visualize(f"Programmer resolve ModuleNotFoundError by:\n{pip_install_content}\n")
+                self.seminar_conclusion = "nothing need to do"
+        else:
+            self.seminar_conclusion = \
+                self.chatting(chat_env=chat_env,
+                              task_prompt=chat_env.env_dict['task_prompt'],
+                              need_reflect=need_reflect,
+                              assistant_role_name=self.assistant_role_name,
+                              user_role_name=self.user_role_name,
+                              phase_prompt=self.phase_prompt,
+                              phase_name=self.phase_name,
+                              assistant_role_prompt=self.assistant_role_prompt,
+                              user_role_prompt=self.user_role_prompt,
+                              memory=chat_env.memory,
+                              chat_turn_limit=chat_turn_limit,
+                              placeholders=self.phase_env,
+                              model_type=self.model_type)
+        chat_env = self.update_chat_env(chat_env)
+        return chat_env
+
+class UnitTestModification(Phase):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+    
+    def update_phase_env(self, chat_env):
+        if any(item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory'])):
+            self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
+                                "modality": chat_env.env_dict['modality'],
+                                "ideas": chat_env.env_dict['ideas'],
+                                "language": chat_env.env_dict['language'],
+                                "unittest_reports": chat_env.env_dict['unittest_reports'],
+                                "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
+                                "unittest_description": chat_env.env_dict['unittest_description'],
+                                "codes": "",
+                                "unittest_codes": chat_env.get_unittest_codes()
+                                })
+        else:
+            self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
+                                "modality": chat_env.env_dict['modality'],
+                                "ideas": chat_env.env_dict['ideas'],
+                                "language": chat_env.env_dict['language'],
+                                "unittest_reports": chat_env.env_dict['unittest_reports'],
+                                "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
+                                "unittest_description": chat_env.env_dict['unittest_description'],
+                                "codes": chat_env.get_codes(),
+                                "unittest_codes": ""
+                                })
+    def update_chat_env(self, chat_env) -> ChatEnv:
+        if "```".lower() in self.seminar_conclusion.lower():
+            chat_env.update_unittest_codes(self.seminar_conclusion)
+            chat_env.rewrite_unittest_codes("UnitTest #" + str(self.phase_env["cycle_index"]) + " Finished")
+            log_visualize(
+                "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
+        return chat_env
 
 class Manual(Phase):
     def __init__(self, **kwargs):

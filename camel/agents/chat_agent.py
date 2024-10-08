@@ -108,7 +108,7 @@ class ChatAgent(BaseAgent):
         self.terminated: bool = False
         self.info: bool = False
         self.init_messages()
-        if memory !=None and self.role_name in["Code Reviewer","Programmer","Software Test Engineer"]:
+        if memory !=None and self.role_name in["Code Reviewer","Programmer","Software Test Engineer","Unit Test Specialist"]:
             self.memory = memory.memory_data.get("All")
         else:
             self.memory = None
