@@ -563,7 +563,7 @@ class TestErrorSummary(Phase):
 
     def update_phase_env(self, chat_env):
         chat_env.generate_images_from_codes()
-        (exist_bugs_flag, test_reports) = chat_env.exist_bugs()
+        (exist_bugs_flag, test_reports) = chat_env.exist_bugs(self.log_filepath)
         self.phase_env.update({"task": chat_env.env_dict['task_prompt'],
                                "modality": chat_env.env_dict['modality'],
                                "ideas": chat_env.env_dict['ideas'],
