@@ -14,6 +14,7 @@ from chatdev.documents import Documents
 from chatdev.roster import Roster
 from chatdev.utils import log_visualize
 from ecl.memory import Memory
+from chatdev.logger import Logger
 
 try:
     from openai.types.chat.chat_completion_message_tool_call import ChatCompletionMessageToolCall
@@ -102,7 +103,10 @@ class ChatEnv:
             os.mkdir(self.memory.directory)
         self.memory.upload()
 
-    def exist_bugs(self) -> tuple[bool, str]:
+    def exist_bugs(self, log_filepath) -> tuple[bool, str]:
+        user_token = log_filepath.split('WareHouse')[-1].split('/')[0]
+        test_reports_log_file_path = os.path.join(os.path.dirname(log_filepath), f"test_reports.log")
+        test_reports_logger = Logger(test_reports_log_file_path, user_token+"test_reports").get_logger()
         directory = self.env_dict['directory']
 
         success_info = "The software run successfully without errors."
@@ -144,8 +148,10 @@ class ChatEnv:
                 if error_output:
                     if "Traceback".lower() in error_output.lower():
                         errs = error_output.replace(directory + "/", "")
+                        test_reports_logger.info(errs)
                         return True, errs
                 else:
+                    test_reports_logger.info(success_info)
                     return False, success_info
         except subprocess.CalledProcessError as e:
             return True, f"Error: {e}"
