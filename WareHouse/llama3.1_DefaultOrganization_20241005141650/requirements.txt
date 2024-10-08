@@ -1,4 +1,0 @@
-# requirements.txt
-python >=3.8
-tkinter
-unittest

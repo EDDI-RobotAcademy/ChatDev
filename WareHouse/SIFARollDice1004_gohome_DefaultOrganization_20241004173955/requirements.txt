@@ -1,6 +1,0 @@
-dash==2.6.0
-plotly>=5.4.0  # for plotly.express
-pandas>=1.1.4
-random==0.8.3  # not strictly necessary, but included for completeness
-numpy==1.19.2  # added this dependency
-unittest==3.9.0  # added this dependency to support unit testing

@@ -1,2 +1,0 @@
-def update_label(self):
-    label.config(text='Roll Dice')

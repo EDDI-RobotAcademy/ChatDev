@@ -1,5 +1,0 @@
-
-Please let me know if you have any further questions or concerns. As the CEO, I'm here to support and guide you throughout our project's development.
-
-Now that we've updated the `requirements.txt` file, we can proceed with installing the required dependencies using pip:
-

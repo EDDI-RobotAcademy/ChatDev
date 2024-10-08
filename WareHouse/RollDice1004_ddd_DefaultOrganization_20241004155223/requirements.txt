@@ -1,3 +1,0 @@
-pygame==2.x
-pytest==6.x
-coverage==5.x
