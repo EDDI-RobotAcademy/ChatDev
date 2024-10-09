@@ -1,0 +1,24 @@
+[2024-10-09 03:28:51,542] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project25\main.py", line 2, in <module>
+    from calculator import CalculatorFrame, CalcButton
+  File "D:\ChatDev\WareHouse\test_user\test_project25\calculator.py", line 2, in <module>
+    import asteval  # safer evaluation library
+ModuleNotFoundError: No module named 'asteval'
+
+[2024-10-09 03:28:54,557] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project25\main.py", line 2, in <module>
+    from calculator import CalculatorFrame, CalcButton
+  File "D:\ChatDev\WareHouse\test_user\test_project25\calculator.py", line 2, in <module>
+    import asteval  # safer evaluation library
+ModuleNotFoundError: No module named 'asteval'
+
+[2024-10-09 03:28:54,557] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project25\main.py", line 2, in <module>
+    from calculator import CalculatorFrame, CalcButton
+  File "D:\ChatDev\WareHouse\test_user\test_project25\calculator.py", line 2, in <module>
+    import asteval  # safer evaluation library
+ModuleNotFoundError: No module named 'asteval'
+
+[2024-10-09 03:29:36,910] - [chat_env.py file line:154] - INFO: The software run successfully without errors.
+[2024-10-09 03:29:36,910] - [chat_env.py file line:154] - INFO: The software run successfully without errors.
+[2024-10-09 03:29:36,910] - [chat_env.py file line:154] - INFO: The software run successfully without errors.

@@ -1,0 +1,65 @@
+[2024-10-09 03:32:45,271] - [phase.py file line:196] - INFO: Here is a detailed user manual in Markdown format to use the calculator app:
+
+manual.md
+================
+
+# Simple Calculator App User Manual
+
+## Introduction
+
+Congratulations on installing and running our simple calculator app! This manual will guide you through the main functions of the app, how to install environment dependencies, and how to use/play it.
+
+## Main Functions
+
+The calculator app supports basic arithmetic operations, including:
+
+* Addition
+* Subtraction
+* Multiplication
+* Division
+
+It also includes a display screen where you can see the calculations and results.
+
+## Installing Environment Dependencies
+
+To run the calculator app, you need to install the required dependencies. You can do this by running the following command in your terminal:
+
+```bash
+pip install -r requirements.txt
+```
+
+This will install the `asteval` package, which is used for evaluating mathematical expressions.
+
+## Running the Calculator App
+
+To run the calculator app, simply execute the `main.py` file using Python:
+
+```bash
+python main.py
+```
+
+You can now interact with the calculator by entering mathematical expressions in the display screen. The app will evaluate the expression and show the result.
+
+## Using the Calculator App
+
+Here's a step-by-step guide on how to use the calculator app:
+
+1. Run the `main.py` file using Python.
+2. Enter a mathematical expression in the display screen, such as `2+3` or `10/2`.
+3. Press the "Enter" key to evaluate the expression.
+4. The result will be displayed in the same line.
+5. You can continue entering new expressions and pressing the "Enter" key to evaluate them.
+
+## Unit Tests
+
+The calculator app comes with unit tests that you can run using the `unittest` module. To run the tests, simply execute the following command:
+
+```bash
+python -m unittest discover
+```
+
+This will discover and run all the unit tests in the project.
+
+## Conclusion
+
+Congratulations on completing this user manual! We hope you enjoy using our simple calculator app and find it useful for your daily calculations. If you have any questions or need further assistance, please don't hesitate to contact us.

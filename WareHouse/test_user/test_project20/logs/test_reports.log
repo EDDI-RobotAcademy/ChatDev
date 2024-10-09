@@ -1,0 +1,24 @@
+[2024-10-08 21:51:28,365] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project20\main.py", line 7, in <module>
+    from calculation import add, subtract, multiply, divide
+  File "D:\ChatDev\WareHouse\test_user\test_project20\calculation.py", line 6, in <module>
+    import numexpr as ne
+ModuleNotFoundError: No module named 'numexpr'
+
+[2024-10-08 21:51:31,384] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project20\main.py", line 7, in <module>
+    from calculation import add, subtract, multiply, divide
+  File "D:\ChatDev\WareHouse\test_user\test_project20\calculation.py", line 6, in <module>
+    import numexpr as ne
+ModuleNotFoundError: No module named 'numexpr'
+
+[2024-10-08 21:51:31,384] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project20\main.py", line 7, in <module>
+    from calculation import add, subtract, multiply, divide
+  File "D:\ChatDev\WareHouse\test_user\test_project20\calculation.py", line 6, in <module>
+    import numexpr as ne
+ModuleNotFoundError: No module named 'numexpr'
+
+[2024-10-08 21:51:50,474] - [chat_env.py file line:154] - INFO: The software run successfully without errors.
+[2024-10-08 21:51:50,474] - [chat_env.py file line:154] - INFO: The software run successfully without errors.
+[2024-10-08 21:51:50,474] - [chat_env.py file line:154] - INFO: The software run successfully without errors.

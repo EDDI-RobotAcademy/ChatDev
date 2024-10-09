@@ -1,0 +1,141 @@
+[2024-10-09 03:54:36,301] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 6, in <module>
+    from .calculator_gui import CalculatorGUI
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:54:39,324] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 6, in <module>
+    from .calculator_gui import CalculatorGUI
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:54:39,324] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 6, in <module>
+    from .calculator_gui import CalculatorGUI
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:12,597] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:12,597] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:12,597] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:15,613] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:15,613] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:15,613] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:15,613] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 20, in <module>
+    main()
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 13, in main
+    gui = CalculatorGUI()
+NameError: name 'CalculatorGUI' is not defined. Did you mean: 'CalculatorApp'?
+
+[2024-10-09 03:55:51,409] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:51,409] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:51,409] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:51,409] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:51,409] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:54,421] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:54,421] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:54,421] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:54,421] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:54,421] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+
+[2024-10-09 03:55:54,421] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project28\main.py", line 5, in <module>
+    from calculator_gui import CalculatorGUI
+  File "D:\ChatDev\WareHouse\test_user\test_project28\calculator_gui.py", line 6, in <module>
+    from .calculator_app import CalculatorApp
+ImportError: attempted relative import with no known parent package
+

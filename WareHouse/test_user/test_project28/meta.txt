@@ -1,0 +1,50 @@
+Task:
+develop a simple calculator app in python.
+
+Config:
+ChatEnvConfig.with_memory: False
+ChatEnvConfig.clear_structure: True
+ChatEnvConfig.git_management: False
+ChatEnvConfig.gui_design: True
+ChatEnvConfig.incremental_develop: False
+ChatEnvConfig.background_prompt: ChatDev is a software company powered by multiple intelligent agents, such as chief executive officer, chief human resources officer, chief product officer, chief technology officer, etc, with a multi-agent organizational structure and the mission of 'changing the digital world through programming'.
+ChatEnvConfig.target_email_address: None
+
+
+Roster:
+Chief Executive Officer, Counselor, Chief Human Resource Officer, Chief Product Officer, Chief Technology Officer, Programmer, Code Reviewer, Software Test Engineer, Chief Creative Officer, Unit Test Specialist
+
+Modality:
+i propose we proceed with creating the detailed specification document outlining all the features and functionalities of the calculator app we can use a tool like google docs or microsoft powerpoint to create and share the document
+
+the final product modality will be a standalone calculator application built using python, with the following features:
+
+* basic arithmetic operations: addition, subtraction, multiplication, division
+* history log to display previous calculations
+* clear button to remove the last calculation
+* reset button to clear all calculations and history
+* save button to save favorite calculations or create a list of frequently used calculations
+* edit button to edit previous calculations directly from the history log
+* interactive graphing feature to plot functions based on calculations
+* default functions for common mathematical operations like sine, cosine, and tangent
+* optional features:
+	+ convert button to convert calculations between different units
+	+ calculate button to perform advanced calculations
+
+let's proceed with creating the specification document!
+
+Ideas:
+
+
+Language:
+ *Python*
+
+Code_Version:
+9.0
+
+Proposed_images:
+0
+
+Incorporated_images:
+0
+

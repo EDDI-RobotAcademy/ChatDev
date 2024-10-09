@@ -1,0 +1,9 @@
+tkinter
+matplotlib==3.3.4
+numpy==1.19.2
+pandas>=1.1.4
+# Optional features
+pint>=0.16
+scipy>=1.6.2
+# Test dependencies
+unittest

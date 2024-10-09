@@ -1,0 +1,60 @@
+[2024-10-08 21:53:14,889] - [phase.py file line:196] - INFO: **Calculator App User Manual**
+
+Welcome to the Calculator App, a simple yet powerful tool for performing various mathematical calculations. This manual will guide you through the installation process, main features, and usage instructions.
+
+**Table of Contents**
+
+1. [Installing Environment Dependencies](#installing-environment-dependencies)
+2. [Main Features](#main-features)
+3. [Using the Calculator App](#using-the-calculator-app)
+
+## Installing Environment Dependencies
+
+To use the Calculator App, you need to install the required dependencies. Run the following command in your terminal:
+
+```
+pip install -r requirements.txt
+```
+
+This will install the necessary libraries: `tkinter` and `numexpr`.
+
+## Main Features
+
+The Calculator App has several key features:
+
+* **Calculator Functions**: The app includes functions for basic arithmetic operations (addition, subtraction, multiplication, division) as well as input validation to prevent errors.
+* **Graphical User Interface (GUI)**: A user-friendly interface is provided using `tkinter`, allowing users to interact with the calculator through a simple GUI.
+
+## Using the Calculator App
+
+### Running the App
+
+To run the Calculator App, navigate to the project directory and execute:
+
+```bash
+python main.py
+```
+
+This will launch the GUI application. You can now use the app by entering mathematical expressions in the input field, and clicking the "=" button to calculate the result.
+
+### Using the Calculator Functions
+
+You can also use the calculator functions directly from the Python interpreter or other scripts. The `calculation` module contains all the necessary functions:
+
+```python
+from calculation import add, subtract, multiply, divide
+```
+
+Use these functions according to their respective documentation for accurate results.
+
+### Unit Testing
+
+The project includes unit tests for the calculator functions and GUI. To run the tests, execute:
+
+```bash
+python unittest_main.py
+```
+
+This will verify that all calculator functions are working correctly.
+
+By following this manual, you should be able to successfully install and use the Calculator App. If you encounter any issues or have questions, please refer to the [full documentation](https://docs.python.org/3/library/tkinter.html) for `tkinter` and the project's GitHub repository for further assistance.
