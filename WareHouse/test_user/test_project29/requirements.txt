@@ -1,0 +1,15 @@
+# Minimum requirements
+
+# For unit testing
+python-dotenv==0.19.1
+numpy==1.19.2
+pandas>=1.1.4
+pytest!=6.0.0, !=7.0.0 (optional)
+
+# Optional dependencies for additional features
+scipy>=1.5.2
+matplotlib>=3.3.4
+
+# For development and debugging
+black==20.8b1
+isort==5.10.1

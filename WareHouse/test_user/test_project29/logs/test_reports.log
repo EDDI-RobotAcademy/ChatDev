@@ -1,0 +1,18 @@
+[2024-10-09 20:54:31,396] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project29\main.py", line 5, in <module>
+    from button_handler import ButtonHandler, tk
+ImportError: cannot import name 'tk' from 'button_handler' (D:\ChatDev\WareHouse\test_user\test_project29\button_handler.py)
+
+[2024-10-09 20:54:34,417] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project29\main.py", line 5, in <module>
+    from button_handler import ButtonHandler, tk
+ImportError: cannot import name 'tk' from 'button_handler' (D:\ChatDev\WareHouse\test_user\test_project29\button_handler.py)
+
+[2024-10-09 20:54:34,417] - [chat_env.py file line:151] - INFO: Traceback (most recent call last):
+  File "D:\ChatDev\WareHouse\test_user\test_project29\main.py", line 5, in <module>
+    from button_handler import ButtonHandler, tk
+ImportError: cannot import name 'tk' from 'button_handler' (D:\ChatDev\WareHouse\test_user\test_project29\button_handler.py)
+
+[2024-10-09 20:55:03,549] - [chat_env.py file line:154] - INFO: The software run successfully without errors.
+[2024-10-09 20:55:03,549] - [chat_env.py file line:154] - INFO: The software run successfully without errors.
+[2024-10-09 20:55:03,549] - [chat_env.py file line:154] - INFO: The software run successfully without errors.

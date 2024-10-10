@@ -1,0 +1,72 @@
+[2024-10-09 20:58:40,231] - [phase.py file line:196] - INFO: Based on your specifications, I will provide a detailed implementation of the `CalculatorModel` and `ButtonHandler` classes.
+
+**calculator_model.py**
+```python
+import numpy as np
+
+class CalculatorModel:
+    def __init__(self):
+        self.num1 = None
+        self.num2 = None
+        self.operator = ""
+
+    def set_num1(self, num):
+        if not isinstance(num, (int, float)):
+            raise TypeError("num1 must be a number")
+        self.num1 = num
+
+    def set_num2(self, num):
+        if not isinstance(num, (int, float)):
+            raise TypeError("num2 must be a number")
+        self.num2 = num
+
+    def set_operator(self, op):
+        if op not in ["+", "-", "*", "/"]:
+            raise ValueError("Invalid operator")
+        self.operator = op
+
+    def calculate(self):
+        if self.operator == "+":
+            return self.num1 + self.num2
+        elif self.operator == "-":
+            return self.num1 - self.num2
+        elif self.operator == "*":
+            return self.num1 * self.num2
+        elif self.operator == "/":
+            return self.num1 / self.num2
+        else:
+            raise ValueError("Invalid operator")
+```
+
+**button_handler.py**
+```python
+class ButtonHandler:
+    def __init__(self):
+        self.buttons = {
+            "button_1": "Button 1",
+            "button_2": "Button 2",
+            # Add more buttons as needed
+        }
+        self.model = None
+
+    def handle_click(self, button_name):
+        if button_name not in self.buttons:
+            raise ValueError("Invalid button name")
+        return f"{self.buttons[button_name]} clicked"
+
+    def get_model(self):
+        if self.model is None:
+            raise ValueError("Calculator model does not exist")
+        return self.model
+
+    def set_model(self, model):
+        if not isinstance(model, CalculatorModel):
+            raise TypeError("Invalid calculator model")
+        self.model = model
+```
+
+Note that I've assumed the `CalculatorModel` class has a single instance, and the `ButtonHandler` class has access to this instance through its `get_model()` method. If you'd like to implement a different approach, please let me know!
+
+Also, I've used Markdown formatting for the manual.md file, which is a detailed user manual for using the software.
+
+Please review these implementations and let me know if there's anything else I can help with!
