@@ -25,8 +25,6 @@ class Documents():
         new_docs = Documents(generated_content, parse, predifined_filename)
         for key in new_docs.docbooks.keys():
             if key not in self.docbooks.keys() or self.docbooks[key] != new_docs.docbooks[key]:
-                print("{} updated.".format(key))
-                print(Fore.WHITE + "------Old:\n{}\n------New:\n{}".format(self.docbooks[key] if key in self.docbooks.keys() else "# None", new_docs.docbooks[key]))
                 self.docbooks[key] = new_docs.docbooks[key]
 
 
@@ -34,11 +32,9 @@ class Documents():
         directory = self.directory
         if not os.path.exists(directory):
             os.mkdir(directory)
-            print("{} Created.".format(directory))
         for filename in self.docbooks.keys():
             with open(os.path.join(directory, filename), "w", encoding="utf-8") as writer:
                 writer.write(self.docbooks[filename])
-                print(os.path.join(directory, filename), "Writen")
 
     def _get_docs(self):
         content = ""

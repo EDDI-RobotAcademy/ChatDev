@@ -24,6 +24,7 @@ from camel.typing import ModelType
 from chatdev.statistics import prompt_cost
 from chatdev.utils import log_visualize
 
+
 try:
     from openai.types.chat import ChatCompletion
 
@@ -403,6 +404,5 @@ class ModelFactory:
         if model_type is None:
             model_type = default_model_type
 
-        # log_visualize("Model Type: {}".format(model_type))
         inst = model_class(model_type, model_config_dict, model_name, base_url)
         return inst
