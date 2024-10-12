@@ -23,7 +23,7 @@ from camel.agents.chat_agent import ChatAgentResponse
 from camel.messages import ChatMessage, UserChatMessage
 from camel.messages import SystemMessage
 from camel.typing import ModelType, RoleType, TaskType, PhaseType
-from chatdev.utils import log_arguments, log_visualize
+from chatdev.utils import log_arguments
 
 
 @log_arguments
@@ -207,9 +207,6 @@ class RolePlaying:
         pseudo_msg.role = "assistant"
         self.user_agent.update_messages(pseudo_msg)
 
-        # here we concatenate to store the real message in the log
-        log_visualize(self.user_agent.role_name,
-                      "**[Start Chat]**\n\n[" + self.assistant_agent.system_message.content + "]\n\n" + content)
         return None, user_msg
 
     def process_messages(

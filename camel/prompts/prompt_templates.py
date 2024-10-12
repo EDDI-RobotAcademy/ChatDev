@@ -49,7 +49,6 @@ class PromptTemplateGenerator:
                 :obj:`task_type` and :obj:`key`.
         """
         try:
-            print(task_type, key)
             return self.task_prompt_template_dict[task_type][key]
 
         except KeyError:

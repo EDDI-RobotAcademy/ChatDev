@@ -12,7 +12,6 @@ import requests
 from chatdev.codes import Codes
 from chatdev.documents import Documents
 from chatdev.roster import Roster
-from chatdev.utils import log_visualize
 from ecl.memory import Memory
 from chatdev.logger import Logger
 
@@ -85,7 +84,6 @@ class ChatEnv:
             for match in re.finditer(r"No module named '(\S+)'", test_reports, re.DOTALL):
                 module = match.group(1)
                 subprocess.Popen("pip install {}".format(module), shell=True).wait()
-                log_visualize("**[CMD Execute]**\n\n[CMD] pip install {}".format(module))
 
     def set_directory(self, directory):
         assert len(self.env_dict['directory']) == 0
@@ -269,7 +267,6 @@ class ChatEnv:
 
         if not os.path.exists(directory):
             os.mkdir(directory)
-            print("{} Created.".format(directory))
 
         meta_filename = "meta.txt"
         with open(os.path.join(directory, meta_filename), "w", encoding="utf-8") as writer:
@@ -282,7 +279,6 @@ class ChatEnv:
             writer.write("{}:\n{}\n\n".format("Code_Version", self.codes.version))
             writer.write("{}:\n{}\n\n".format("Proposed_images", len(self.proposed_images.keys())))
             writer.write("{}:\n{}\n\n".format("Incorporated_images", len(self.incorporated_images.keys())))
-        print(os.path.join(directory, meta_filename), "Wrote")
 
     def generate_images_from_codes(self):
         def download(img_url, file_name):

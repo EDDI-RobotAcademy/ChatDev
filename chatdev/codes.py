@@ -3,8 +3,6 @@ import os
 import re
 import subprocess
 
-from chatdev.utils import log_visualize
-
 
 class Codes:
     def __init__(self, generated_content=""):
@@ -72,7 +70,6 @@ class Codes:
 
 '''\n""" + unified_diff + "\n```"
 
-                log_visualize(update_codes_content)
                 self.codebooks[key] = new_codes.codebooks[key]
 
     def _rewrite_codes(self, git_management, phase_info=None) -> None:
@@ -118,8 +115,6 @@ class Codes:
                     os.path.dirname(os.path.dirname(self.directory)),
                     "WareHouse/" + os.path.basename(self.directory),
                     "WareHouse/" + os.path.basename(self.directory))
-                log_visualize(rewrite_codes_content)
-            log_visualize(log_git_info)
 
     def _get_codes(self) -> str:
         content = ""
@@ -167,7 +162,6 @@ class Codes:
 
 '''\n""" + unified_diff + "\n```"
 
-                log_visualize(update_codes_content)
                 self.codebooks[key] = new_codes.codebooks[key]
     
     def _rewrite_unittest_codes(self, git_management, phase_info=None) -> None:# 유닛테스트코드만 rewrite가능한지?아니면 따로 구성할 필요 없는지 체크
@@ -213,8 +207,6 @@ class Codes:
                     os.path.dirname(os.path.dirname(self.directory)),
                     "WareHouse/" + os.path.basename(self.directory),
                     "WareHouse/" + os.path.basename(self.directory))
-                log_visualize(rewrite_codes_content)
-            log_visualize(log_git_info)
 
     def _load_from_hardware(self, directory) -> None:
         assert len([filename for filename in os.listdir(directory) if filename.endswith(".py")]) > 0
@@ -223,4 +215,3 @@ class Codes:
                 if filename.endswith(".py"):
                     code = open(os.path.join(directory, filename), "r", encoding="utf-8").read()
                     self.codebooks[filename] = self._format_code(code)
-        log_visualize("{} files read from {}".format(len(self.codebooks.keys()), directory))

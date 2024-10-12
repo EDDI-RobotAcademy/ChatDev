@@ -5,7 +5,6 @@ from collections import defaultdict
 
 from camel.typing import ModelType
 from chatdev.chat_env import ChatEnv
-from chatdev.utils import log_visualize
 
 
 def check_bool(s):
@@ -149,8 +148,6 @@ class ComposedPhase(ABC):
                 max_turn_step = phase_item['max_turn_step']
                 need_reflect = check_bool(phase_item['need_reflect'])
                 self.phase_env["cycle_index"] = cycle_index
-                log_visualize(
-                    f"**[Execute Detail]**\n\nexecute SimplePhase:[{phase}] in ComposedPhase:[{self.phase_name}], cycle {cycle_index}")
                 if phase in self.phases:
                     self.phases[phase].phase_env = self.phase_env
                     self.phases[phase].update_phase_env(chat_env)
@@ -253,7 +250,6 @@ class Test(ComposedPhase):
 
     def break_cycle(self, phase_env) -> bool:
         if not phase_env['exist_bugs_flag']:
-            log_visualize(f"**[Test Info]**\n\nAI User (Software Test Engineer):\nTest Pass!\n")
             return True
         else:
             return False
@@ -270,7 +266,6 @@ class UnitTest(ComposedPhase):
 
     def break_cycle(self, phase_env) -> bool:
         if not phase_env['exist_unittest_bugs_flag']:
-            log_visualize(f"**[UnitTest Info]**\n\nAI User (Software Test Engineer):\nTest Pass!\n")
             return True
         else:
             return False
