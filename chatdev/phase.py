@@ -6,8 +6,6 @@ from camel.agents import RolePlaying
 from camel.messages import ChatMessage
 from camel.typing import TaskType, ModelType
 from chatdev.chat_env import ChatEnv
-from chatdev.statistics import get_info
-from chatdev.utils import log_visualize, log_arguments
 from chatdev.logger import Logger
 
 
@@ -50,8 +48,14 @@ class Phase(ABC):
         self.target_email_address = target_email_address
         self.model_name = model_name
         self.base_url = base_url
+        
+        user_token = self.log_filepath.split('WareHouse')[-1].split('/')[0]
+        phase_log_file_path = os.path.join(os.path.dirname(self.log_filepath), f"{self.__class__.__name__}.log")
+        self.phase_logger = Logger(phase_log_file_path, user_token+f"{self.__class__.__name__}").get_logger()
 
-    @log_arguments
+        current_phase_log_path = os.path.join(os.path.dirname(self.log_filepath), f"Phase.log")
+        self.current_phase_logger = Logger(current_phase_log_path, user_token+"_phase").get_logger()
+
     def chatting(
             self,
             chat_env,
@@ -117,15 +121,9 @@ class Phase(ABC):
             base_url=self.base_url
         )
 
-        # log_visualize("System", role_play_session.assistant_sys_msg)
-        # log_visualize("System", role_play_session.user_sys_msg)
-
         # start the chat
         _, input_user_msg = role_play_session.init_chat(None, placeholders, phase_prompt)
         seminar_conclusion = None
-        user_token = self.log_filepath.split('WareHouse')[-1].split('/')[0]
-        phase_log_file_path = os.path.join(os.path.dirname(self.log_filepath), f"{self.__class__.__name__}.log")
-        phase_logger = Logger(phase_log_file_path, user_token+f"{self.__class__.__name__}").get_logger()
 
 
         # handle chats
@@ -151,8 +149,9 @@ class Phase(ABC):
             # TODO: max_tokens_exceeded errors here
             if isinstance(assistant_response.msg, ChatMessage):
                 # we log the second interaction here
-                log_visualize(role_play_session.assistant_agent.role_name,
-                              conversation_meta + "[" + role_play_session.user_agent.system_message.content + "]\n\n" + assistant_response.msg.content)
+                # role = role_play_session.user_agent.role_name
+                # content = conversation_meta + "[" + role_play_session.user_agent.system_message.content + "]\n\n" + assistant_response.msg.content
+                # self.phase_logger.info(str(role) + ": " + str(content) + "\n")
                 if role_play_session.assistant_agent.info:
                     seminar_conclusion = assistant_response.msg.content
                     break
@@ -161,8 +160,9 @@ class Phase(ABC):
 
             if isinstance(user_response.msg, ChatMessage):
                 # here is the result of the second interaction, which may be used to start the next chat turn
-                log_visualize(role_play_session.user_agent.role_name,
-                              conversation_meta + "[" + role_play_session.assistant_agent.system_message.content + "]\n\n" + user_response.msg.content)
+                # role = role_play_session.user_agent.role_name
+                # content = conversation_meta + "[" + role_play_session.assistant_agent.system_message.content + "]\n\n" + user_response.msg.content
+                # self.phase_logger.info(str(role) + ": " + str(content) + "\n")
                 if role_play_session.user_agent.info:
                     seminar_conclusion = user_response.msg.content
                     break
@@ -191,9 +191,8 @@ class Phase(ABC):
         else:
             seminar_conclusion = assistant_response.msg.content
 
-        log_visualize("**[Seminar Conclusion]**:\n\n {}".format(seminar_conclusion))
         seminar_conclusion = seminar_conclusion.split("<INFO>")[-1]
-        phase_logger.info(seminar_conclusion)
+        self.phase_logger.info("**[Seminar Conclusion]**:\n\n {}".format(seminar_conclusion))
         return seminar_conclusion
 
     def self_reflection(self,
@@ -304,10 +303,7 @@ class Phase(ABC):
             chat_env: updated global chat chain environment using the conclusion from this phase execution
 
         """
-        user_token = self.log_filepath.split('WareHouse')[-1].split('/')[0]
-        current_phase_log_path = os.path.join(os.path.dirname(self.log_filepath), f"Phase.log")
-        current_phase_logger = Logger(current_phase_log_path, user_token+"_phase").get_logger()
-        current_phase_logger.info(f"{self.__class__.__name__}")
+        self.current_phase_logger.info(f"{self.__class__.__name__}")
         self.update_phase_env(chat_env)
         self.seminar_conclusion = \
             self.chatting(chat_env=chat_env,
@@ -379,8 +375,6 @@ class Coding(Phase):
         if len(chat_env.codes.codebooks.keys()) == 0:
             raise ValueError("No Valid Codes.")
         chat_env.rewrite_codes("Finish Coding")
-        log_visualize(
-            "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 
@@ -396,8 +390,6 @@ class ArtDesign(Phase):
 
     def update_chat_env(self, chat_env) -> ChatEnv:
         chat_env.proposed_images = chat_env.get_proposed_images_from_message(self.seminar_conclusion)
-        log_visualize(
-            "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 
@@ -416,9 +408,6 @@ class ArtIntegration(Phase):
     def update_chat_env(self, chat_env) -> ChatEnv:
         chat_env.update_codes(self.seminar_conclusion)
         chat_env.rewrite_codes("Finish Art Integration")
-        # chat_env.generate_images_from_codes()
-        log_visualize(
-            "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 
@@ -448,8 +437,6 @@ class CodeComplete(Phase):
         if len(chat_env.codes.codebooks.keys()) == 0:
             raise ValueError("No Valid Codes.")
         chat_env.rewrite_codes("Code Complete #" + str(self.phase_env["cycle_index"]) + " Finished")
-        log_visualize(
-            "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 
@@ -487,8 +474,6 @@ class CodeReviewModification(Phase):
         if "```".lower() in self.seminar_conclusion.lower():
             chat_env.update_codes(self.seminar_conclusion)
             chat_env.rewrite_codes("Review #" + str(self.phase_env["cycle_index"]) + " Finished")
-            log_visualize(
-                "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         self.phase_env['modification_conclusion'] = self.seminar_conclusion
         return chat_env
 
@@ -508,13 +493,11 @@ class CodeReviewHuman(Phase):
         if "```".lower() in self.seminar_conclusion.lower():
             chat_env.update_codes(self.seminar_conclusion)
             chat_env.rewrite_codes("Human Review #" + str(self.phase_env["cycle_index"]) + " Finished")
-            log_visualize(
-                "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
     def execute(self, chat_env, chat_turn_limit, need_reflect) -> ChatEnv:
         self.update_phase_env(chat_env)
-        log_visualize(
+        self.phase_logger.info(
             f"**[Human-Agent-Interaction]**\n\n"
             f"Now you can participate in the development of the software!\n"
             f"The task is:  {chat_env.env_dict['task_prompt']}\n"
@@ -533,8 +516,7 @@ class CodeReviewHuman(Phase):
                 break
             provided_comments.append(user_input)
         self.phase_env["comments"] = '\n'.join(provided_comments)
-        log_visualize(
-            f"**[User Provided Comments]**\n\n In the #{self.phase_env['cycle_index']} of total {self.phase_env['cycle_num']} comments: \n\n" +
+        self.phase_logger.info(f"**[User Provided Comments]**\n\n In the #{self.phase_env['cycle_index']} of total {self.phase_env['cycle_num']} comments: \n\n" +
             self.phase_env["comments"])
         if self.phase_env["comments"].strip().lower() == "exit":
             return chat_env
@@ -571,7 +553,7 @@ class TestErrorSummary(Phase):
                                "codes": chat_env.get_codes(),
                                "test_reports": test_reports,
                                "exist_bugs_flag": exist_bugs_flag})
-        log_visualize("**[Test Reports]**:\n\n{}".format(test_reports))
+        self.phase_logger.info("**[Test Reports]**:\n\n{}".format(test_reports))
 
     def update_chat_env(self, chat_env) -> ChatEnv:
         chat_env.env_dict['error_summary'] = self.seminar_conclusion
@@ -583,13 +565,12 @@ class TestErrorSummary(Phase):
         self.update_phase_env(chat_env)
         if "ModuleNotFoundError" in self.phase_env['test_reports']:
             chat_env.fix_module_not_found_error(self.phase_env['test_reports'])
-            log_visualize(
-                f"Software Test Engineer found ModuleNotFoundError:\n{self.phase_env['test_reports']}\n")
+            self.phase_logger.info(f"Software Test Engineer found ModuleNotFoundError:\n{self.phase_env['test_reports']}\n")
             pip_install_content = ""
             for match in re.finditer(r"No module named '(\S+)'", self.phase_env['test_reports'], re.DOTALL):
                 module = match.group(1)
                 pip_install_content += "{}\n```{}\n{}\n```\n".format("cmd", "bash", f"pip install {module}")
-                log_visualize(f"Programmer resolve ModuleNotFoundError by:\n{pip_install_content}\n")
+                self.phase_logger.info(f"Programmer resolve ModuleNotFoundError by:\n{pip_install_content}\n")
             self.seminar_conclusion = "nothing need to do"
         else:
             self.seminar_conclusion = \
@@ -628,8 +609,6 @@ class TestModification(Phase):
         if "```".lower() in self.seminar_conclusion.lower():
             chat_env.update_codes(self.seminar_conclusion)
             chat_env.rewrite_codes("Test #" + str(self.phase_env["cycle_index"]) + " Finished")
-            log_visualize(
-                "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 
@@ -647,8 +626,6 @@ class EnvironmentDoc(Phase):
     def update_chat_env(self, chat_env) -> ChatEnv:
         chat_env._update_requirements(self.seminar_conclusion)
         chat_env.rewrite_requirements()
-        log_visualize(
-            "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 class UnitTestSummary(Phase):
@@ -656,7 +633,7 @@ class UnitTestSummary(Phase):
         super().__init__(**kwargs)
         self.isthereunittest = False
     def update_phase_env(self, chat_env):
-        log_visualize("**[do you have any unittestcode]**:\n\n{}".format([item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory'])]))
+        self.phase_logger.info("**[do you have any unittestcode]**:\n\n{}".format([item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory'])]))
 
         self.isthereunittest = any(item.startswith('unittest') for item in os.listdir(chat_env.env_dict['directory']))
         
@@ -669,7 +646,7 @@ class UnitTestSummary(Phase):
                                 "unittest_codes": chat_env.get_unittest_codes(),# 유닛테스트코드 가져와야되나
                                 "unittest_reports": unittest_reports,
                                 "exist_unittest_bugs_flag": exist_unittest_bugs_flag})
-            log_visualize("**[Unit Test Reports]**:\n\n{}".format(unittest_reports))
+            self.phase_logger.info("**[Unit Test Reports]**:\n\n{}".format(unittest_reports))
         else:
             # 기존 코드를 보고 unittest 코드를 작성 (프롬프트)
             # get codes해서 프롬프트에 전달후 프롬프트와 함께 전달;;;;;;;
@@ -681,7 +658,7 @@ class UnitTestSummary(Phase):
                                 "exist_unittest_bugs_flag": True,
                                 "unittest_codes": "**There is no unitest code because the unit test code has not been written yet**.",
                                 "unittest_reports": "**There is no report because the unit test code has not been written yet**",})
-            log_visualize("**[Unit Test Reports_desc]**:\n\n{}".format(self.phase_env['unittest_reports']))
+            self.phase_logger.info("**[Unit Test Reports_desc]**:\n\n{}".format(self.phase_env['unittest_reports']))
 
     
     def update_chat_env(self, chat_env) -> ChatEnv:
@@ -694,7 +671,7 @@ class UnitTestSummary(Phase):
             chat_env.env_dict['unittest_description'] = ""
             chat_env.env_dict['unittest_reports'] = self.phase_env['unittest_reports']# 조건달앙할듯
         else:
-            return log_visualize("legend situation occurred...")
+            self.phase_logger.info("legend situation occurred...")
         return chat_env
     
     def execute(self, chat_env, chat_turn_limit, need_reflect) -> ChatEnv:# 이거 좀 애매함(10.02) -> 한번 잘 봐야댐
@@ -702,13 +679,12 @@ class UnitTestSummary(Phase):
         if not self.phase_env['unittest_reports']:
             if "ModuleNotFoundError" in self.phase_env['unittest_reports']:
                 chat_env.fix_module_not_found_error(self.phase_env['unittest_reports'])
-                log_visualize(
-                    f"Software Test Engineer found ModuleNotFoundError:\n{self.phase_env['unittest_reports']}\n")
+                self.phase_logger.info(f"Software Test Engineer found ModuleNotFoundError:\n{self.phase_env['unittest_reports']}\n")
                 pip_install_content = ""
                 for match in re.finditer(r"No module named '(\S+)'", self.phase_env['unittest_reports'], re.DOTALL):
                     module = match.group(1)
                     pip_install_content += "{}\n```{}\n{}\n```\n".format("cmd", "bash", f"pip install {module}")
-                    log_visualize(f"Programmer resolve ModuleNotFoundError by:\n{pip_install_content}\n")
+                    self.phase_logger.info(f"Programmer resolve ModuleNotFoundError by:\n{pip_install_content}\n")
                 self.seminar_conclusion = "nothing need to do"
         else:
             self.seminar_conclusion = \
@@ -759,8 +735,6 @@ class UnitTestModification(Phase):
         if "```".lower() in self.seminar_conclusion.lower():
             chat_env.update_unittest_codes(self.seminar_conclusion)
             chat_env.rewrite_unittest_codes("UnitTest #" + str(self.phase_env["cycle_index"]) + " Finished")
-            log_visualize(
-                "**[Software Info]**:\n\n {}".format(get_info(chat_env.env_dict['directory'], self.log_filepath)))
         return chat_env
 
 class Manual(Phase):

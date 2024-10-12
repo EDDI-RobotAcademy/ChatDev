@@ -12,7 +12,7 @@ from camel.typing import TaskType, ModelType
 from chatdev.chat_env import ChatEnv, ChatEnvConfig
 from chatdev.statistics import get_info
 from camel.web_spider import modal_trans
-from chatdev.utils import log_visualize, now
+from chatdev.utils import now
 
 
 def check_bool(s):
@@ -224,7 +224,6 @@ class ChatChain:
                 # logs with error trials are left in WareHouse/
                 if os.path.isfile(file_path) and not filename.endswith(".py") and not filename.endswith(".log"):
                     os.remove(file_path)
-                    print("{} Removed.".format(file_path))
 
         software_path = os.path.join(directory, self.project_name)
         config_copy_path = os.path.join(software_path, "configs")
@@ -268,7 +267,6 @@ class ChatChain:
         preprocess_msg += "**Log File**: {}\n\n".format(self.log_filepath)
         preprocess_msg += "**ChatDevConfig**:\n{}\n\n".format(self.chat_env.config.__str__())
         preprocess_msg += "**ChatGPTConfig**:\n{}\n\n".format(chat_gpt_config)
-        log_visualize(preprocess_msg)
 
         # init task prompt
         if check_bool(self.config['self_improve']):
@@ -290,45 +288,15 @@ class ChatChain:
         root = os.path.dirname(filepath)
 
         if self.chat_env_config.git_management:
-            log_git_info = "**[Git Information]**\n\n"
-
             self.chat_env.codes.version += 1
             os.system("cd {}; git add .".format(self.chat_env.env_dict["directory"]))
-            log_git_info += "cd {}; git add .\n".format(self.chat_env.env_dict["directory"])
             os.system("cd {}; git commit -m \"v{} Final Version\"".format(self.chat_env.env_dict["directory"],
                                                                           self.chat_env.codes.version))
-            log_git_info += "cd {}; git commit -m \"v{} Final Version\"\n".format(self.chat_env.env_dict["directory"],
-                                                                                  self.chat_env.codes.version)
-            log_visualize(log_git_info)
-
-            git_info = "**[Git Log]**\n\n"
+            
             import subprocess
-
             # execute git log
             command = "cd {}; git log".format(self.chat_env.env_dict["directory"])
             completed_process = subprocess.run(command, shell=True, text=True, stdout=subprocess.PIPE)
-
-            if completed_process.returncode == 0:
-                log_output = completed_process.stdout
-            else:
-                log_output = "Error when executing " + command
-
-            git_info += log_output
-            log_visualize(git_info)
-
-        post_info = "**[Post Info]**\n\n"
-        now_time = now()
-        time_format = "%Y%m%d%H%M%S"
-        datetime1 = datetime.strptime(self.start_time, time_format)
-        datetime2 = datetime.strptime(now_time, time_format)
-        duration = (datetime2 - datetime1).total_seconds()
-
-        post_info += "Software Info: {}".format(
-            get_info(self.chat_env.env_dict['directory'], self.log_filepath) + "\n\n🕑**duration**={:.2f}s\n\n".format(
-                duration))
-
-        post_info += "ChatDev Starts ({})".format(self.start_time) + "\n\n"
-        post_info += "ChatDev Ends ({})".format(now_time) + "\n\n"
 
         directory = self.chat_env.env_dict['directory']
         if self.chat_env.config.clear_structure:
@@ -336,16 +304,8 @@ class ChatChain:
                 file_path = os.path.join(directory, filename)
                 if os.path.isdir(file_path) and file_path.endswith("__pycache__"):
                     shutil.rmtree(file_path, ignore_errors=True)
-                    post_info += "{} Removed.".format(file_path) + "\n\n"
 
-        log_visualize(post_info)
-
-        logging.shutdown()
         time.sleep(1)
-
-        # shutil.move(self.log_filepath,
-        #             os.path.join(root + "/WareHouse" + f"/{self.user_token}", "_".join([self.project_name, self.org_name, self.start_time]),
-        #                          os.path.basename(self.log_filepath)))
 
     # @staticmethod
     def self_task_improve(self, task_prompt):
@@ -378,14 +338,7 @@ then you should return a message in a format like \"<INFO> revised_version_of_th
             base_url=self.base_url
         )
 
-        # log_visualize("System", role_play_session.assistant_sys_msg)
-        # log_visualize("System", role_play_session.user_sys_msg)
-
         _, input_user_msg = role_play_session.init_chat(None, None, self_task_improve_prompt)
         assistant_response, user_response = role_play_session.step(input_user_msg, True)
         revised_task_prompt = assistant_response.msg.content.split("<INFO>")[-1].lower().strip()
-        log_visualize(role_play_session.assistant_agent.role_name, assistant_response.msg.content)
-        log_visualize(
-            "**[Task Prompt Self Improvement]**\n**Original Task Prompt**: {}\n**Improved Task Prompt**: {}".format(
-                task_prompt, revised_task_prompt))
         return revised_task_prompt
