@@ -166,6 +166,9 @@ class ChatEnv:
         # unittest로 시작하는 파일을 실행시켜야됨
         # directory는 warehouse의 생성된 디렉토리
         directory = self.env_dict['directory']
+        if not any(item.startswith('unittest') for item in os.listdir(directory)):
+
+            return True, "No unit test files found in the directory."
         success_info = "The software run successfully without errors."
         try:
 
@@ -213,7 +216,7 @@ class ChatEnv:
         except Exception as ex:
             return True, f"An error occurred: {ex}"
 
-        return True, "No unit tests implemented yet"
+        
         # else:
         #     return False, "there is no unittest code"
     
