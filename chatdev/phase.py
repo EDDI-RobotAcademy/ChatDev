@@ -320,6 +320,8 @@ class Phase(ABC):
                           memory=chat_env.memory,
                           model_type=self.model_type)
         chat_env = self.update_chat_env(chat_env)
+        if self.__class__.__name__ == "Manual":
+            self.current_phase_logger.info("Done")
         return chat_env
 
 
