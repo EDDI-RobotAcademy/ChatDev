@@ -699,7 +699,7 @@ class UnitTestSummary(Phase):
     
     def execute(self, chat_env, chat_turn_limit, need_reflect) -> ChatEnv:# 이거 좀 애매함(10.02) -> 한번 잘 봐야댐
         self.update_phase_env(chat_env)
-        if not self.phase_env['unittest_reports']:
+        if self.phase_env['unittest_reports']:
             if "ModuleNotFoundError" in self.phase_env['unittest_reports']:
                 chat_env.fix_module_not_found_error(self.phase_env['unittest_reports'])
                 log_visualize(
