@@ -49,12 +49,12 @@ class Phase(ABC):
         self.model_name = model_name
         self.base_url = base_url
         
-        user_token = self.log_filepath.split('WareHouse')[-1].split('/')[0]
+        log_seperator = "".join(self.log_filepath.split('WareHouse')[-1].split('/')[:3])
         phase_log_file_path = os.path.join(os.path.dirname(self.log_filepath), f"{self.__class__.__name__}.log")
-        self.phase_logger = Logger(phase_log_file_path, user_token+f"{self.__class__.__name__}").get_logger()
+        self.phase_logger = Logger(phase_log_file_path, log_seperator+f"{self.__class__.__name__}").get_logger()
 
         current_phase_log_path = os.path.join(os.path.dirname(self.log_filepath), f"Phase.log")
-        self.current_phase_logger = Logger(current_phase_log_path, user_token+"_phase").get_logger()
+        self.current_phase_logger = Logger(current_phase_log_path, log_seperator+"_phase").get_logger()
 
     def chatting(
             self,
