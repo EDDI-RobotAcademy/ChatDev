@@ -1,4 +1,0 @@
-
-But based on the code provided, it's safe to assume that only unittest is required for the calculator app to run properly.
-
-Therefore, my final answer is:
