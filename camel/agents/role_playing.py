@@ -26,7 +26,7 @@ from camel.typing import ModelType, RoleType, TaskType, PhaseType
 from chatdev.utils import log_arguments
 
 
-@log_arguments
+# @log_arguments
 class RolePlaying:
     r"""Role playing between two agents.
 
