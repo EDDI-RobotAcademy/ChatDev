@@ -657,37 +657,32 @@ class UnitTestSummary(Phase):
                                 "ideas": chat_env.env_dict['ideas'],
                                 "language": chat_env.env_dict['language'],
                                 "codes": chat_env.get_codes(),
-                                "exist_unittest_bugs_flag": True,
-                                "unittest_codes": "**There is no unitest code because the unit test code has not been written yet**.",
-                                "unittest_reports": "**There is no report because the unit test code has not been written yet**",})
+                                "exist_unittest_bugs_flag": True,# 필요한지 체크할 것
+                                "unittest_codes": "**no unit test written yet**",
+                                "unittest_reports": "**no unit test reports yet**",})
             self.phase_logger.info("**[Unit Test Reports_desc]**:\n\n{}".format(self.phase_env['unittest_reports']))
 
     
     def update_chat_env(self, chat_env) -> ChatEnv:
-        if self.isthereunittest is not True:
-            chat_env.env_dict['unittest_description'] = self.seminar_conclusion# 조건달아야할듯
-            chat_env.env_dict['unitetest_reports'] = "**There is no report because the unit test code has not been written yet**."
-
-        elif self.isthereunittest :
-            chat_env.env_dict['unittest_error_summary'] = self.seminar_conclusion# 조건달아야할듯
-            chat_env.env_dict['unittest_description'] = ""
-            chat_env.env_dict['unittest_reports'] = self.phase_env['unittest_reports']# 조건달앙할듯
-        else:
-            self.phase_logger.info("legend situation occurred...")
+        chat_env.env_dict['unittest_description'] = self.seminar_conclusion
+        chat_env.env_dict['unittest_reports'] = self.phase_env['unittest_reports']
         return chat_env
     
-    def execute(self, chat_env, chat_turn_limit, need_reflect) -> ChatEnv:# 이거 좀 애매함(10.02) -> 한번 잘 봐야댐
+    def execute(self, chat_env, chat_turn_limit, need_reflect) -> ChatEnv:
         self.update_phase_env(chat_env)
-        if not self.phase_env['unittest_reports']:
+        if self.phase_env['unittest_reports']:
             if "ModuleNotFoundError" in self.phase_env['unittest_reports']:
-                chat_env.fix_module_not_found_error(self.phase_env['unittest_reports'])
-                self.phase_logger.info(f"Software Test Engineer found ModuleNotFoundError:\n{self.phase_env['unittest_reports']}\n")
-                pip_install_content = ""
-                for match in re.finditer(r"No module named '(\S+)'", self.phase_env['unittest_reports'], re.DOTALL):
-                    module = match.group(1)
-                    pip_install_content += "{}\n```{}\n{}\n```\n".format("cmd", "bash", f"pip install {module}")
-                    self.phase_logger.info(f"Programmer resolve ModuleNotFoundError by:\n{pip_install_content}\n")
-                self.seminar_conclusion = "nothing need to do"
+                self.phase_logger.info(f"ModuleNotFoundError found in Unit Test Reports:\n{self.phase_env['unittest_reports']}\n")
+                pip_results = chat_env.fix_module_not_found_error_in_unittest(self.phase_env['unittest_reports'])
+                all_successful = all(result[1] == 0 for result in pip_results)
+                
+                if all_successful:
+                    self.phase_logger.info("ModuleNotFoundError has been resolved. nothing need to do.")
+                    self.seminar_conclusion = "ModuleNotFoundError has been resolved. nothing need to do."
+                else:
+                    failed_modules = [result[0] for result in pip_results if result[1] != 0]
+                    self.phase_logger.error(f"A problem occurred while resolving dependencies related to the module. Please check your import statements. {failed_modules}")
+                    self.seminar_conclusion = f"A problem occurred while resolving dependencies related to the module. Please check your import statements. {failed_modules}"
         else:
             self.seminar_conclusion = \
                 self.chatting(chat_env=chat_env,
@@ -717,7 +712,6 @@ class UnitTestModification(Phase):
                                 "ideas": chat_env.env_dict['ideas'],
                                 "language": chat_env.env_dict['language'],
                                 "unittest_reports": chat_env.env_dict['unittest_reports'],
-                                "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
                                 "unittest_description": chat_env.env_dict['unittest_description'],
                                 "codes": "",
                                 "unittest_codes": chat_env.get_unittest_codes()
@@ -728,7 +722,6 @@ class UnitTestModification(Phase):
                                 "ideas": chat_env.env_dict['ideas'],
                                 "language": chat_env.env_dict['language'],
                                 "unittest_reports": chat_env.env_dict['unittest_reports'],
-                                "unittest_error_summary": chat_env.env_dict['unittest_error_summary'],
                                 "unittest_description": chat_env.env_dict['unittest_description'],
                                 "codes": chat_env.get_codes(),
                                 "unittest_codes": ""

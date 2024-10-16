@@ -73,7 +73,6 @@ class ChatEnv:
             "error_summary": "",
             "test_reports": "",
             "unittest_reports": "",
-            "unittest_error_summary": "",
             "unittest_description":"",
             "unittest_codes":""
         }
@@ -84,6 +83,17 @@ class ChatEnv:
             for match in re.finditer(r"No module named '(\S+)'", test_reports, re.DOTALL):
                 module = match.group(1)
                 subprocess.Popen("pip install {}".format(module), shell=True).wait()
+
+    @staticmethod
+    def fix_module_not_found_error_in_unittest(test_reports):
+        results = []
+        if "ModuleNotFoundError" in test_reports:
+            for match in re.finditer(r"No module named '(\S+)'", test_reports, re.DOTALL):
+                module = match.group(1)
+                process = subprocess.Popen(f"pip install {module}", shell=True)
+                return_code = process.wait()
+                results.append((module, return_code))
+        return results
 
     def set_directory(self, directory):
         assert len(self.env_dict['directory']) == 0
@@ -154,16 +164,11 @@ class ChatEnv:
         return False, success_info
 
     def bugs_in_unittest(self) -> tuple[bool, str]:
-        # directory = self.env_dict['directory']-> 기존코드
-        # if any(item.startswith('unittest') for item in self.env_dict['directory']):
-            
-        # 여기서 확인 로직작성
-        # unittest로 시작하는 파일을 실행시켜야됨
-        # directory는 warehouse의 생성된 디렉토리
         directory = self.env_dict['directory']
         success_info = "The software run successfully without errors."
+        if not any(item.startswith('unittest') for item in os.listdir(directory)):
+            return True, "No unit test files found in the directory."
         try:
-
             # check if we are on windows or linux
             if os.name == 'nt':
                 command = "cd {} && dir && python unittest_main.py".format(directory)
@@ -208,9 +213,7 @@ class ChatEnv:
         except Exception as ex:
             return True, f"An error occurred: {ex}"
 
-        return True, "No unit tests implemented yet"
-        # else:
-        #     return False, "there is no unittest code"
+        return True, "An unexpected error occurred in bugs_in_unittest"
     
     def recruit(self, agent_name: str):
         self.roster._recruit(agent_name)
